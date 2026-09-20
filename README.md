@@ -87,7 +87,7 @@ npm run probe:authority
 npm run probe:bindings
 ```
 
-The [verification record](docs/VERIFICATION.md) documents each result. [GitHub Actions](https://github.com/FREQUENCITY15/evidence-router-core/actions/workflows/tests.yml) runs `npm test` on every push and pull request using Node.js 24 on Ubuntu. Its first run passed for commit `9ba8aca`. The demo and probes were verified locally; a repository-history secret check remains pending.
+The [verification record](docs/VERIFICATION.md) documents each result. [GitHub Actions](https://github.com/FREQUENCITY15/evidence-router-core/actions/workflows/tests.yml) runs `npm test` on every push and pull request using Node.js 24 on Ubuntu. Its first run passed for commit `9ba8aca`. The demo and probes were verified locally. Gitleaks 8.30.1 reported no findings across the four reachable commits through `a9521ba`; this is a scoped scan result, not a guarantee that no secrets exist.
 
 ## Provenance and reuse
 

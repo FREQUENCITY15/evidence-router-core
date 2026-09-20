@@ -32,13 +32,24 @@ The [workflow](../.github/workflows/tests.yml) runs `npm test` using Node.js 24 
 
 Inspect runs on the [Tests workflow page](https://github.com/FREQUENCITY15/evidence-router-core/actions/workflows/tests.yml). The README badge shows the current result for `main`.
 
+## Repository-history secret scan
+
+On 20 September 2026, Gitleaks 8.30.1 scanned all locally reachable Git history through commit `a9521ba1e44b3bc748b3354b4af6345e62be6d8c`. The checkout was not shallow. A remote-ref check showed only `main`, pointing to that same commit.
+
+- Result: **4 commits scanned, 0 findings, exit code `0`**.
+- Scope: `git --log-opts="--all --full-history"`, using the scanner's bundled default rules, full redaction and `--ignore-gitleaks-allow`.
+- No repository ignore file or baseline was used. An explicit configuration enabled the bundled default rules.
+- The Windows release archive was downloaded from the official [Gitleaks release](https://github.com/gitleaks/gitleaks/releases/tag/v8.30.1) and checked against its published SHA-256 checksum: `d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e`.
+
+This scan covers the reachable history of this extracted repository at that commit. It does not cover the original source archive, other repositories, deleted remote history, or future commits. Pattern-based scanning cannot establish that all possible secrets are absent.
+
 ## Evidence limits and pending checks
 
 - This is a summary of supplied terminal output. Raw transcripts, the tested Git commit and Node.js/npm versions were not archived with this record.
 - The five-command results above came from local runs. The separate successful GitHub Actions run covers `npm test` only.
 - The demo uses synthetic events; it does not exercise live workers, models or an operational router.
 - The JSON-file CLI was not separately executed in this verification sequence.
-- A repository-history secret check remains unresolved. These test results do not establish that the repository history is secret-free.
+- The history scan above reported no findings within its stated scope; test results alone do not establish that the repository history is secret-free.
 
 ## Reproduce the checks
 
