@@ -2,6 +2,7 @@
   "name": "evidence-router-core",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "description": "In-memory supervised work decision core; no live worker execution",
   "scripts": {

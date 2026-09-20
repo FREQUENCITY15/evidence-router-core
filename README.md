@@ -93,4 +93,4 @@ The [verification record](docs/VERIFICATION.md) documents each result. [GitHub A
 
 This core was extracted from the Evidence Router project. [SOURCE-PROVENANCE.json](SOURCE-PROVENANCE.json) records the source archive and hashes of the extracted core, tests and probes. Historical paths in source comments may refer to audit documents outside this package.
 
-A public reuse licence has not yet been selected. The package retains `"private": true` to prevent accidental npm publication; this does not control GitHub repository visibility.
+Licensed under the [MIT License](LICENSE). The package retains `"private": true` to prevent accidental npm publication; this does not control GitHub repository visibility.
