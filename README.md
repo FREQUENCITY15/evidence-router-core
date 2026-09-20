@@ -1,40 +1,83 @@
 # Evidence Router Core
 
-A small extracted part of Thom's Evidence Router project: turn an event history into decisions about which work may run next.
+**Evidence-driven decision core for bounded LLM/agent orchestration.**
 
-**Status: packaged during APPLY; fresh execution is pending VERIFY.** The decision core and existing tests are copied byte-for-byte from the supplied project. The CLI and demo are new and not yet executed.
+A dependency-free JavaScript core that replays an event history to determine which work may run next, which work is blocked, and why. It models plan approval, dependencies, acceptance policies and retry limits for supervised agent workflows.
 
-## Start here — Windows PowerShell
+**Verified September 2026:** 68 automated tests passed; the synthetic demo and all three probe scripts completed with exit code `0`. Transition and authority probes reported no open findings within their tested scope. See the [verification record](docs/VERIFICATION.md) for results and limits.
 
-Open this folder in PowerShell. Node.js and npm are required; there are no third-party dependencies and no npm install step.
+## The problem it addresses
 
-```powershell
+In an agent workflow, a task reporting success is only one part of deciding whether dependent work can proceed. Its result may still need acceptance, its plan may have changed, or a consumer may reference an earlier attempt.
+
+Evidence Router Core makes those decisions explicit and reproducible. Each unit of work, called a **packet**, has dependencies and a bounded attempt allowance. Replaying the recorded events produces its state, eligibility and reason for being blocked. Model reviews remain advisory; acceptance follows the declared controller or operator policy.
+
+## Try the demo
+
+With Node.js and npm available, open the repository folder and run:
+
+```sh
 npm run demo
 ```
 
-Expected, not yet verified: three tables showing A eligible, then A succeeded while B remains blocked, then A accepted and B eligible. These are synthetic events, not real worker receipts.
+There are no third-party dependencies and no installation step. The demo uses synthetic events without workers, model calls, network access or file writes.
 
-To inspect your own single-objective event array:
+It follows two packets, where B depends on A:
 
-```powershell
+| Recorded event | Packet A | Can B run? |
+| --- | --- | --- |
+| Plan approved | Ready to run | No: A has not been accepted |
+| A succeeds | Awaiting assessment | No: success alone does not release B |
+| A is accepted | Accepted | Yes: its dependency is satisfied |
+
+Run the automated tests with:
+
+```sh
+npm test
+```
+
+## Engineering decisions demonstrated
+
+- **Deterministic replay:** the same event history produces the same decisions without clocks, randomness or model calls in the core.
+- **Explicit acceptance:** execution success and acceptance are separate states; operator-only acceptance cannot be supplied by a controller alone.
+- **Stale-evidence handling:** plan revisions and producer retries can block dependent work. A fresh binding event can update the consumer's input reference while preserving history.
+- **Bounded retries and replay handling:** attempt allowances and idempotency checks prevent invalid redispatch decisions in the tested scenarios.
+- **Inspectable refusals:** missing dependencies, cycles, stale references and invalid transitions produce reasons that callers can inspect.
+
+The tests cover these rules, including regression cases for undeclared packets, conflicting attempts and superseded assessments. The probes exercise additional transition, authority and binding scenarios.
+
+## How the code fits together
+
+The core validates event structure, folds the history into state, and derives a projection containing packet eligibility and diagnostic information. The demo and CLI are small callers of that core.
+
+| File | Responsibility |
+| --- | --- |
+| [contracts.mjs](.router/objectives/contracts.mjs) | Schemas, structural validation and reason codes |
+| [reducer.mjs](.router/objectives/reducer.mjs) | Event replay, packet state and eligibility decisions |
+| [tests](.router/objectives/tests/) | 56 core tests and 12 gate regression tests |
+| [demo.mjs](demo.mjs) | Three-stage acceptance-gating example |
+| [cli.mjs](cli.mjs) | JSON-file input and projection output |
+| [probes](prep/astra-review/) | Transition, authority and stale-binding checks |
+
+To inspect your own JSON array of events for a single objective:
+
+```sh
 node cli.mjs events.json
 ```
 
-The CLI prints a JSON projection. Inspect `invalidTransitions` and `definitionProblems`; producing a projection does not certify the event log as valid.
+Supply your own `events.json`; see [demo.mjs](demo.mjs) for event construction. Inspect `invalidTransitions` and `definitionProblems` in the output: producing a projection does not certify that the event history is valid. The CLI was not part of the five-command verification record.
 
-## What exists
+## Scope and limits
 
-- In-memory event replay, dependency decisions, acceptance policies and attempt limits.
-- Existing 56 core test declarations, 12 regression test declarations and three probes.
-- A console demo and JSON-file CLI.
+This repository contains an in-memory decision core. Integrating it into an operational agent system would require worker dispatch, a scheduler, durable event storage and authenticated approvals.
 
-## What remains outside this package
+Authority fields are claims supplied in events, not identity checks. Artifact digests are checked structurally and by reference; the core does not verify file contents. Route and write-scope declarations do not provide an execution sandbox. Passing the tests and probes establishes the recorded results within their tested scope, not a general safety guarantee.
 
-The live task router, worker dispatch, scheduler, GUI, durable orchestration storage and authenticated approvals. This core cannot execute your queued work. Authority strings are claims, not identity checks. Artifact digest contents are not verified against files. Route and write-scope declarations are not an execution sandbox.
+## Verification
 
-## Verification stage — run only when approved
+Run the same five checks used for the September 2026 verification:
 
-```powershell
+```sh
 npm test
 npm run demo
 npm run probe:transitions
@@ -42,23 +85,10 @@ npm run probe:authority
 npm run probe:bindings
 ```
 
-Capture actual output and exit codes. Test declarations are not passing results. Probe exit 3 means known-open findings and must not be relabelled PASS. No baseline verifier is needed for this extracted project.
+The [verification record](docs/VERIFICATION.md) documents each result. GitHub Actions verification and a repository-history secret check remain pending.
 
-## Put this small project in Git
+## Provenance and reuse
 
-After VERIFY, from this folder:
+This core was extracted from the Evidence Router project. [SOURCE-PROVENANCE.json](SOURCE-PROVENANCE.json) records the source archive and hashes of the extracted core, tests and probes. Historical paths in source comments may refer to audit documents outside this package.
 
-```powershell
-git init -b main
-git add README.md package.json .gitignore cli.mjs demo.mjs SOURCE-PROVENANCE.json .router/objectives prep/astra-review
-git diff --cached --stat
-git commit -m "Import evidence router decision core"
-```
-
-Then connect your chosen Git remote and push. No remote was created and nothing was published during packaging. Public reuse licensing has not been selected; no licence grant is invented here.
-
-## One next milestone
-
-Finish VERIFY for this extracted core and record the results. Then capture the current live router source separately if the goal is a complete operational router repository. Do not rebuild the runtime from historical baseline copies.
-
-`SOURCE-PROVENANCE.json` identifies the supplied archive and unchanged extracted files. Historical paths mentioned in source comments may refer to audit documents retained in the original project, not this minimal package.
+A public reuse licence has not yet been selected. The package retains `"private": true` to prevent accidental npm publication; this does not control GitHub repository visibility.
