@@ -1,3 +1,5 @@
+![Evidence Router Core](docs/assets/evidence-router-core-banner.png)
+
 # Evidence Router Core
 
 [![Tests](https://github.com/FREQUENCITY15/evidence-router-core/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/FREQUENCITY15/evidence-router-core/actions/workflows/tests.yml)
