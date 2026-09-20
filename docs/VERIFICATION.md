@@ -24,10 +24,18 @@ The binding probe confirms that a rejected producer blocks its consumer, accepta
 
 No open findings were reported by the transition and authority probes in these runs. That statement applies to their tested scope. If a later probe exits with code `3`, record its known-open findings separately rather than treating that run as passing.
 
+## GitHub Actions verification
+
+The repository owner supplied a screenshot showing **Tests #1** passed on `main` for commit `9ba8aca` ("Run automated tests with GitHub Actions"). The displayed run duration was 12 seconds.
+
+The [workflow](../.github/workflows/tests.yml) runs `npm test` using Node.js 24 on Ubuntu for every push and pull request, and also supports manual runs. The screenshot confirms the workflow result; the detailed hosted test log was not included in this record. The demo and three probe scripts are covered by the local results above, not by this workflow.
+
+Inspect runs on the [Tests workflow page](https://github.com/FREQUENCITY15/evidence-router-core/actions/workflows/tests.yml). The README badge shows the current result for `main`.
+
 ## Evidence limits and pending checks
 
 - This is a summary of supplied terminal output. Raw transcripts, the tested Git commit and Node.js/npm versions were not archived with this record.
-- These were local runs, not GitHub Actions runs. A hosted CI result is still pending.
+- The five-command results above came from local runs. The separate successful GitHub Actions run covers `npm test` only.
 - The demo uses synthetic events; it does not exercise live workers, models or an operational router.
 - The JSON-file CLI was not separately executed in this verification sequence.
 - A repository-history secret check remains unresolved. These test results do not establish that the repository history is secret-free.

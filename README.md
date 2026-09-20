@@ -1,5 +1,7 @@
 # Evidence Router Core
 
+[![Tests](https://github.com/FREQUENCITY15/evidence-router-core/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/FREQUENCITY15/evidence-router-core/actions/workflows/tests.yml)
+
 **Evidence-driven decision core for bounded LLM/agent orchestration.**
 
 A dependency-free JavaScript core that replays an event history to determine which work may run next, which work is blocked, and why. It models plan approval, dependencies, acceptance policies and retry limits for supervised agent workflows.
@@ -85,7 +87,7 @@ npm run probe:authority
 npm run probe:bindings
 ```
 
-The [verification record](docs/VERIFICATION.md) documents each result. GitHub Actions verification and a repository-history secret check remain pending.
+The [verification record](docs/VERIFICATION.md) documents each result. [GitHub Actions](https://github.com/FREQUENCITY15/evidence-router-core/actions/workflows/tests.yml) runs `npm test` on every push and pull request using Node.js 24 on Ubuntu. Its first run passed for commit `9ba8aca`. The demo and probes were verified locally; a repository-history secret check remains pending.
 
 ## Provenance and reuse
 
