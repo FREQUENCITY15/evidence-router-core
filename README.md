@@ -16,6 +16,8 @@ Evidence Router Core makes those decisions explicit and reproducible. Each unit 
 
 ## Try the demo
 
+Follow the [two-minute walkthrough](docs/WALKTHROUGH.md) to see why a successful task can still leave dependent work blocked, and what releases it.
+
 With Node.js and npm available, open the repository folder and run:
 
 ```sh
